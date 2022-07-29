@@ -36,15 +36,30 @@ java -version
 ```
 
 3. kafka 브로커 실행
-```
-(kafka_2.12-2.5.0 버전으로 실습 진행함)
+ ```
+ (kafka_2.12-2.5.0 버전으로 실습 진행함)
 
-wget https://archive.apache.org/dist/kafka/2.5.0/kafka_2.12-2.5.0.tgz
-tar xvf kafka_2.12-2.5.0.tgz
-cd kafka_2.12-2.5.0
-```
+ wget https://archive.apache.org/dist/kafka/2.5.0/kafka_2.12-2.5.0.tgz
+ tar xvf kafka_2.12-2.5.0.tgz
+ cd kafka_2.12-2.5.0
+ ```
 
+4. kafka 브로커 힙 메모리 설정  
+ 1). 환경변수 export 이용하여 선언(터미널 세션 종료시 초기화)
+ ```
+ export KAFKA_HEAP_OPTS="-Xmx400m -Xms400m"
+ echo $KAFKA_HEAP_OPTS
+ ```
+ 2). ~/.bashrc 파일에 입력(터미널 세션이 종료되어도 초기화되지 않음)
+ ```
+ vim ~/.bashrc
 
-
+ a 눌러 insert mode 진입
+ 마지막 부분에
+ export KAFKA_HEAP_OPTS="-Xmx400m -Xms400m" 추가
+ esc :wq
+ source ~/.bashrc
+ echo $KAFKA_HEAPS_OPTS
+ ```
 
 참고자료 : (https://www.tibco.com/ko/reference-center/what-is-apache-kafka)
