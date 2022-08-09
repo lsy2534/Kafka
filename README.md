@@ -114,4 +114,31 @@ java -version
 > /usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server peter-kafka01.foo.bar:9092 --topic peter-overview01
 ```
  
+ 
+ # 카프카 모니터링
+ * JMX(Java Management eXtensions) 
+```
+> cat /usr/local/kafka/config/jmx
+> netstat -ntl | grep 9999
+
+프로메테우스 설치(ansible을 활용한 설치)
+> sudo amazon-linux-extras install -y docker
+> sudo service docker start
+> sudo usermod -a -G docker ec2-user
+> sudo chkconfig docker on
+> sudo reboot
+
+재접속
+> sudo systemctl status docker
+> sudo mkdir -p /etc/prometheus
+> sudo cp kafka2/chapter7/prometheus.yml /etc/prometheus/
+> sudo docker run -d --network host -p 9090:9090 -v /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml --name prometheus prom/prometheus
+
+그라파나 설치
+> sudo docker run -d --network host -p 3000:3000 --name grafana grafana/grafana:7.3.7
+
+익스포터 설치
+> 
+
+```
 참고자료 : (https://www.tibco.com/ko/reference-center/what-is-apache-kafka)
