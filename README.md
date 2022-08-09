@@ -25,6 +25,13 @@ Kafka는 서버 클러스터 내에서 데이터 스트림을 레코드로 유�
 ---------------------------------------  
 
 # Install. 
+``` AWS 주요 설치 내용 (실전카프카 개발부터 운영까지 참고)
+1. sudo amazon-linux-extras install -y ansible2
+2. sudo yum install -y git
+3. git clone https://github.com/onlybooks/kafka2
+4. cd ~/kafka2/chapter2/ansible-book
+5. ansible-playbook -i hosts zookeeper.yml
+```
 
 1. AWS(Amazon Web Service) Instance 생성.
  - AWS Instance 생성방법 : (https://zzang9ha.tistory.com/329)
@@ -95,6 +102,16 @@ java -version
  - 오프셋의 표기는 숫자 형태로 나타나며, 컨슈머 그룹은 자신의 오프셋 정보를 카프카에서 가장 안전한 토픽에 저장합니다.( _consumer_offsets 토픽에 각 컨슈머 그룹별로 오프셋 위치 정보 기록)
 
 
+# 사용
+```
+> topic 생성
+> /usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server peter-kafka01.foo.bar:9092 --create --topic peter-overview01 --partitions 1 --replication-factor 3  
 
+> producer 메시지 전송
+> /usr/local/kafka/bin/kafka-console-producer.sh --bootstrap-server peter-kafka01.foo.bar:9092 --topic peter-overview01  
+
+> consumer 메지시 읽기
+> /usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server peter-kafka01.foo.bar:9092 --topic peter-overview01
+```
  
 참고자료 : (https://www.tibco.com/ko/reference-center/what-is-apache-kafka)
