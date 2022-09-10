@@ -144,4 +144,53 @@ java -version
 > 
 
 ```
+
+# 프로듀서의 기본 파티셔너  
+
+* 프로듀서 API를 사용하면 UniformStickyPartitioner와 RoundRobinPartitioner 2개 파티셔너를 제공한다.
+* 카프카 클라이언트 2.5.0 버전에서 파티셔너를 지정하지 않는 경우 UniformStickyPartitioner가 파티셔너로 기본 설정한다.
+
+메시지 키가 있을 경우 동작
+- UniformStickyPartitioner 와 RoundRobinPartitioner 둘다 메시지 키가 있을 때는 메시지 키의 해시값과 파티션을 매칭하여 레코드를 전송
+- 만약 파티션 개수가 변경될 경우 메시지 키와 파티션 번호 매칭은 깨지게 된다.
+- 동일한 메시지 키가 존재하는 레코드는 동일한 파티션 번호에 전달됨.
+
+메시지 키가 없을 경우 동작
+메시지 키가 없을 때는 파티션에 최대한 동일하게 분배하는 로직이 들어 있는데
+UniformStickyPartitioner는 RoundRobinPartitioner의 단점을 개선하였다는 점이 다르다.
+
+RoundRobinPartitioner
+-  ProducerRecord가 들어오는 대로 파티션을 순회하면서 전송
+-  어큐뮤레이터에서 묶이는 정도가 적기 때문에 전송 성능이 낮음
+UniformStickyPartitioner
+- 어큐뮤레이터에서 레코드들이 배치로 묶일 떄까지 기다렸다가 전송
+- 배치로 묶일 뿐 결국 파티션을 순회하면서 보내기 때문에 모든 파티션에 분배됨.
+
+프로듀서의 커스텀 파티셔너  
+카프카 클라이언트 라이브러리에서는 사용자 지정 파티셔너를 생성하기 위한 Partitioner인터페이스를 제공한다  
+Partitioner 인터페이스를 상속받은 사용자 정의 클래스에서 메시지 키 또는 메시지값에 따른 파티션 지정 로직을 적용할수도 있다. 파티셔너를 통해 파티션이 지정된 데이터는 어큐뮬레이터에 버퍼로 쌓인다.  
+동일한 키에 대한 특정 파티션으로 보낼수 있다.  
+
+프로듀서 주요 옵션(필수 옵션)  
+-bootstrap.servers: 프로듀서가 데이터를 전송할 대상 카프카 클러스터에 속한 브로커의 호스트  
+이름 : 포트를 1개 이상 작성한다. 2개 이상 브로커 정보를 입력하여 일부 브로커에 이슈가 발생하더라도 접속하는 데에 이슈가 없도록 성정 가능하다.  
+- key.serializer: 레코드의 메시지 키를 직렬화하는 클래스를 지정한다.
+- value.serializer : 레코드의 메시지 값을 직렬화하는 클래스를 지정한다.
+
+프로듀서 주요 옵션(선택 옵션)
+- acks : 프로듀서가 전송한 데이터가 브로커들에 정상적으로 저장되었는지 전송 성공 여브를 확인하는데 사용하는 옵션이다. 0, 1, -1(all) 중 하나로 성정할 수 있다. 기본값은 1이다.
+- linger.ms : 배치를 전송하기 전까지 기다리는 최소 시간이다. 기본값은 0 이다.
+- retries : 브로커로부터 에러를 받고 난 뒤 재전송을 시도하는 횟수를 지정한다. 기본값은 2147483647이다.
+- max.in.flighrt.requests.per.connection : 한 번에 요청하는 최대 커넥션 개수. 설정된 값만큼 동시에 전달 요청을 수행한다. 기본값은 5이다.
+- partitioner.class: 레코드를 파티션에 전송할 떄 적용하는 파티셔너 클래스를 지정한다. 기본값은 org.apache.kafka.clients.producer.internals.DefaultPartitioner이다.
+- enable.idempotence : 멱등성 프로듀서로 동작할지 여부를 성정. 기본값은 false
+- transactional.id : 프로듀서가 레코드를 전송할 떄 레코드를 트랜잭션 단위로 묶을지 여부를 성정한다. 기본값은 null이다.
+
+
+
+
+
+
+
+
 참고자료 : (https://www.tibco.com/ko/reference-center/what-is-apache-kafka)
