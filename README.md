@@ -258,6 +258,37 @@ acks=-1(all) : 리더 파티션과 팔로워 파티션이 디스크에 저장됬
  - earliest: 설정하면 가장 낮은(가장 오래된) 오프셋부터 읽기 시작한다.
  - none : 설정하면 컨슈머 그룹이 커밋밋한 기록이 있는지 찾아본다. 만약 커밋 기록이 없으면 오류를 반환하고, 커밋 기록이 있다면 기존 커밋 기록 이후 오프셋부터 읽기 시작한다. 기본값은 latest
  
+ # 동기 오프셋 커밋 컨슈머
+- poll() 메소드가 호출된 이후에 commitStnc() 메소드를 호출하여 오프셋 커밋을 명시적으로 수행할 수 있다. commitSync()는 poll()메소드로 받은 가장 마지막 레코드의 오프셋을 기준으로 커밋한다. 동기 오프셋 커밋을 사용할 경우에는 poll() 메서드로 받은 모든 레코드의 처리가 끝난 이후 commitSync() 메서드를 호출해야 한다.
+ 
+ ``` java
+ KafkaConsumer<String, String> consumer = KafkaConsumer<>(configs);
+ consumer.subscribe(Arrays.asList(TOPIC_NAME));
+ 
+ while(true){
+   ConumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1));
+   for ( consumerRecord<String, String> record : records){
+    logger.info("record:{}", record);
+   }
+   comsumer.commitSync();
+ }
+ ```
+ 
+ # 비동기 오프셋 커밋 컨슈머
+ - 동기 오프셋 커밋을 사용할 경우 커밋 응답을 기다리는 동안 데이터 처리가 일시적으로 중단 도기 때문에 더 많은 데이터를 처리하기 위해서 비동기 오프셋 커밋을 사용할 수 있다. 비동기 오프셋 커밋은 commitAsync() ㅔㅁ서드를 호출하여 사용할 수 있다.
+
+``` java
+KafkaConumer<String, String> consumer = new kafkaConumer<>(configs);
+consumer.subscrib(Arrays.asList(TOPIC_NAME);
+
+while(true){
+  ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1));
+  for (ConsumerRecord<String, String> record : records){
+    logger.info("record:{}". record);
+  }
+}
+```
+ 
  
  
  
