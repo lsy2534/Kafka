@@ -408,5 +408,9 @@ KStream과 KTable을 조인하려면 반드시 코파티셔닝(co-partitioning)�
 1. 파티셔닝 개수 동일
 2. 파티셔닝 전략이 같아야한다.
 
+### 스트림즈DSL 중요 옵션(필수옵션)
+-- bootstrap.servers
+-- appication.id
+
 1.참고자료(자료다운로드) : (https://github.com/bjpublic/apache-kafka-with-java)
 2.참고자료 : (https://www.tibco.com/ko/reference-center/what-is-apache-kafka)
